@@ -20,7 +20,7 @@ public class BookRepository implements BookRepositoryInterface {
 
     public BookRepository() {
 	bookInMemoryMap = seedData();
-	isbnKey = 2;
+	isbnKey = 0;
     }
 
     private ConcurrentHashMap<Long, Book> seedData(){
@@ -78,6 +78,14 @@ public class BookRepository implements BookRepositoryInterface {
 	return newBook;
     }
 
+    public Book saveBookWithIsbn(Book newBook) {
+	checkNotNull(newBook, "newBook instance must not be null");
+	bookInMemoryMap.putIfAbsent(newBook.getIsbn(), newBook);
+
+	return newBook;
+
+    }
+
     /**
      * @see edu.sjsu.cmpe.library.repository.BookRepositoryInterface#getBookByISBN(java.lang.Long)
      */
@@ -104,9 +112,6 @@ public class BookRepository implements BookRepositoryInterface {
     @Override
     public void delete(Long isbn) {
 	bookInMemoryMap.remove(isbn);
-    }   
-    @Override
-    public void addBook(Book newBook) {
-    	bookInMemoryMap.putIfAbsent(newBook.getIsbn(), newBook);
     }
+
 }

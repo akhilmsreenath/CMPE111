@@ -29,6 +29,7 @@ public interface BookRepositoryInterface {
      * @return a book instance
      */
     Book getBookByISBN(Long isbn);
+
     /**
      * Retrieve all books
      * 
@@ -43,6 +44,4 @@ public interface BookRepositoryInterface {
      *            an ISBN of the book to be deleted
      */
     void delete(Long isbn);
-    
-    void addBook(Book newBook);
 }

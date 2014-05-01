@@ -13,6 +13,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.jms.MessageListener;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 import com.yammer.dropwizard.jersey.params.LongParam;
 import com.yammer.metrics.annotation.Timed;
@@ -23,34 +29,36 @@ import edu.sjsu.cmpe.library.dto.BookDto;
 import edu.sjsu.cmpe.library.dto.BooksDto;
 import edu.sjsu.cmpe.library.dto.LinkDto;
 import edu.sjsu.cmpe.library.repository.BookRepositoryInterface;
+import edu.sjsu.cmpe.library.repository.BookRepository;
+import edu.sjsu.cmpe.library.LibraryService;
 
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.TextMessage;
-import javax.jms.Session;
+import org.fusesource.stomp.codec.StompFrame;
+import static org.fusesource.stomp.client.Constants.*;
+import static org.fusesource.hawtbuf.Buffer.ascii;
+import org.fusesource.stomp.jms.message.StompJmsTextMessage;
+import org.fusesource.hawtbuf.Buffer;
+import org.fusesource.hawtbuf.AsciiBuffer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/v1/books")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class BookResource {
+public class BookResource implements MessageListener{
     /** bookRepository instance */
     private final BookRepositoryInterface bookRepository;
-    private final MessageProducer producer;
-    private final Session session;
-    private final String libraryName;
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * BookResource constructor
      * 
      * @param bookRepository
      *            a BookRepository instance
-     * @param libraryName 
      */
-    public BookResource(BookRepositoryInterface bookRepository, MessageProducer producer, Session session, String libraryName) {
+    public BookResource(BookRepositoryInterface bookRepository) {
 	this.bookRepository = bookRepository;
-	this.producer = producer;
-	this.session = session;
-	this.libraryName = libraryName;
     }
 
     @GET
@@ -63,8 +71,8 @@ public class BookResource {
 		"GET"));
 	bookResponse.addLink(new LinkDto("update-book-status", "/books/"
 		+ book.getIsbn(), "PUT"));
-	bookResponse.addLink(new LinkDto("view-all-book", "/books/","GET"));
-	bookResponse.addLink(new LinkDto("delete-book","/books/" + book.getIsbn(),"DELETE"));
+	// add more links
+
 	return bookResponse;
     }
 
@@ -96,17 +104,20 @@ public class BookResource {
     @PUT
     @Path("/{isbn}")
     @Timed(name = "update-book-status")
-    public Response updateBookStatus(@PathParam("isbn") LongParam isbn,@DefaultValue("available") @QueryParam("status") Status status) throws JMSException {
+    public Response updateBookStatus(@PathParam("isbn") LongParam isbn,
+	    @DefaultValue("available") @QueryParam("status") Status status) {
+	if(status == Status.lost) {
+	    StompJmsTextMessage stompMessage = new StompJmsTextMessage();
+	    try {
+		stompMessage.setText(LibraryService.getLibraryName() + ":" + isbn);
+		LibraryService.producer.send(stompMessage);
+	    }
+	    catch (Exception e) {
+		return Response.status(500).build();
+	    }
+	}
 	Book book = bookRepository.getBookByISBN(isbn.get());
 	book.setStatus(status);
-	if(status.getValue() == "lost")
-	{
-		String msgstr = libraryName + ":" + isbn.get().toString();
-		TextMessage msg = session.createTextMessage(msgstr);
-		msg.setLongProperty("id", System.currentTimeMillis());
-		producer.send(msg);
-	}
-		
 
 	BookDto bookResponse = new BookDto(book);
 	String location = "/books/" + book.getIsbn();
@@ -124,6 +135,38 @@ public class BookResource {
 	bookResponse.addLink(new LinkDto("create-book", "/books", "POST"));
 
 	return bookResponse;
+    }
+    public void onMessage(Message message) {
+	try {
+	    String tMessage = ((TextMessage) message).getText();
+	    log.info("Receiving message {}", tMessage);
+	    Pattern pattern = Pattern.compile(":");
+	    String[] split = pattern.split(tMessage, 4);
+	    String isbn = split[0];
+	    String title = split[1];
+	    String category = split[2];
+	    String coverImage = split[3];
+	    log.info("received book from publisher: isbn: {}, title: {}, category: {}, coverimage: {}",
+		     isbn, title, category, coverImage);
+	    Long lIsbn = (long) Integer.parseInt(isbn);
+	    Book book = bookRepository.getBookByISBN(lIsbn);
+	    
+	    if(book != null && book.getStatus() == Status.lost) {
+		log.info("changing book {} status to available", book.getTitle());
+		book.setStatus(Status.available);
+	    } else  if (book == null){
+		book = new Book();
+		book.setTitle(title);
+		book.setCategory(category);
+		book.setCoverimage(new URL(coverImage));
+		book.setIsbn(lIsbn);
+		((BookRepository) bookRepository).saveBookWithIsbn(book);
+		log.info("added new book {}", book);
+	    }
+	} catch (Exception e) {
+	    log.info("Exception " + e.getClass() + ":" +  e.getMessage());
+	    throw new RuntimeException(e);
+	}
     }
 }
 

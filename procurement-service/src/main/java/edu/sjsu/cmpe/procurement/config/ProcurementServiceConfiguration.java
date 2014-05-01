@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe.procurement.config;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,43 +14,54 @@ public class ProcurementServiceConfiguration extends Configuration {
     @JsonProperty
     private String stompQueueName;
 
+   @NotEmpty
+    @JsonProperty
+    private String stompQueuePrefix;
+
     @NotEmpty
     @JsonProperty
-    private String stompTopicName;
-    
-    @NotEmpty
-    @JsonProperty
-    private String apolloUser;
-    
-    @NotEmpty
-    @JsonProperty
-    private String apolloPassword;
-    
-    @NotEmpty
+    private String stompTopicPrefix;
+
     @JsonProperty
     private String apolloHost;
+
+    @JsonProperty
+    public int apolloPort;
+
+    @JsonProperty
+    public String apolloUser;
+
+    @JsonProperty
+    public String apolloPwd;
     
     @JsonProperty
-    private int apolloPort;
-    
+    @NotEmpty
+    private String procurementId;
+
+    @JsonProperty
+    @NotEmpty
+    private String publisherResource;
+
+    @Valid
+    @NotNull
     @JsonProperty
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
     /**
-*
-* @return
-*/
+     * 
+     * @return
+     */
     public JerseyClientConfiguration getJerseyClientConfiguration() {
-        return httpClient;
+	return httpClient;
     }
-    
+
     /**
      * @return the stompQueueName
      */
     public String getStompQueueName() {
 	return stompQueueName;
     }
-
+    
     /**
      * @param stompQueueName
      *            the stompQueueName to set
@@ -56,63 +70,67 @@ public class ProcurementServiceConfiguration extends Configuration {
 	this.stompQueueName = stompQueueName;
     }
 
-    /**
-     * @return the stompTopicName
-     */
-    public String getStompTopicName() {
-	return stompTopicName;
+    public String  getStompQueuePrefix() {
+	return stompQueuePrefix;
     }
 
-    /**
-     * @param stompTopicName
-     *            the stompTopicName to set
-     */
-    public void setStompTopicName(String stompTopicName) {
-	this.stompTopicName = stompTopicName;
-    }
-    
-    public String getApolloUser()
-    {
-    	return apolloUser;
-    }	
-    
-    public void setApolloUser(String apolloUser)
-    {
-    	this.apolloUser = apolloUser;
-    }
-    
-    public String getApolloPassword()
-    {
-    	return apolloPassword;
-    }
-    
-    public void setApolloPassword(String apolloPassword)
-    
-    {
-    	this.apolloPassword = apolloPassword;
+    public void setStompQueuePrefix(String prefix) {
+	stompQueuePrefix = prefix;
     }
 
-    
-    public String getApolloHost()
-    {
-    	return apolloHost;
+    public String getStompTopicPrefix() {
+	return stompTopicPrefix;
     }
-    
-    public void setApolloHost(String apolloHost)
-    {
-    	this.apolloHost = apolloHost;
+
+    public void setStompTopicPrefix(String stompTopicPrefix) {
+	this.stompTopicPrefix = stompTopicPrefix;
     }
-    
-    public int getApolloPort()
-    {
-    	return apolloPort;
+
+    public String getApolloHost() {
+	return apolloHost;
     }
-    
-    public void setApolloPort(int apolloPort)
-    {
-    	this.apolloPort = apolloPort;
+
+    public void setApolloHost(String host) {
+	apolloHost = host;
     }
-    
+
+    public int getApolloPort() {
+	return apolloPort;
+    }
+
+    public void setApolloPort(int port) {
+	apolloPort = port;
+    }
+
+    public String getApolloUser() {
+	return apolloUser;
+    }
+
+    public void setApolloUser(String user) {
+	apolloUser = user;
+    }
+
+    public String getApolloPassword() {
+	return apolloPwd;
+    }
+
+    public void setApolloPassword(String pwd) {
+	apolloPwd = pwd;
+    }
+
+    public String getProcurementId() {
+	return procurementId;
+    }
+
+    public void setprocurementId(String id) {
+	procurementId = id;
+    }
+
+    public String getPublisherResource() {
+	return publisherResource;
+    }
+
+    public void setPublicReesourde(String resource) {
+	publisherResource = resource;
+    }
 }
-
-

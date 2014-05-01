@@ -4,19 +4,22 @@
 
 # Apollo STOMP Broker Configuration
 stompQueueName: /queue/64762.book.orders
+stompQueuePrefix: /queue/64762.book.
 
 # Library B subscribes to the Computer category ONLY!
 stompTopicName: /topic/64762.book.computer
+stompTopicPrefix: /topic/64762.book.
 
-# TODO: Apollo STOMP Broker URL and login
+# Name for library B
+libraryName: library-b
+
 apolloUser: "admin"
 apolloPassword: "password"
-apolloHost: "54.215.133.131"
+#Y
+apolloHost: "54.193.56.218"
+#X
+#apolloHost: "54.215.133.131"
 apolloPort: 61613
-
-
-# Library Name
-libraryName: "library-b"
 
 # HTTP-specific options.
 http:

@@ -1,4 +1,5 @@
-package edu.sjsu.cmpe.procurement;
+package edu.sjsu.cmpe.procurement.api.resources;
+
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,11 +12,12 @@ import javax.ws.rs.core.Response;
 public class RootResource {
 
     public RootResource() {
-        // do nothing
+	// do nothing
     }
 
     @GET
     public Response getRoot() {
-        return Response.ok("Ok").build();
+	return Response.ok("Ok").build();
     }
 }
+
