@@ -16,7 +16,7 @@ libraryName: library-b
 apolloUser: "admin"
 apolloPassword: "password"
 #Y
-apolloHost: "54.193.56.218"
+apolloHost: "54.215.133.131"
 #X
 #apolloHost: "54.215.133.131"
 apolloPort: 61613

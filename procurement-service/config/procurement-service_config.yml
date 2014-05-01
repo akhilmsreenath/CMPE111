@@ -12,7 +12,7 @@ stompTopicPrefix: /topic/64762.book.
 apolloUser: "admin"
 apolloPassword: "password"
 #Y
-apolloHost: "54.193.56.218"
+apolloHost: "54.215.133.131"
 #X
 #apolloHost: "54.215.133.131"
 apolloPort: 61613
@@ -21,7 +21,7 @@ apolloPort: 61613
 procurementId: 64762
 
 #publisher resource address
-publisherResource: "http://54.193.56.218:9000/orders/64762"
+publisherResource: "http://54.215.133.131:9000/orders/64762"
 
 # HTTP-specific options.
 http:
