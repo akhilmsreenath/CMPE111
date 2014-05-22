@@ -10,66 +10,83 @@ public class LibraryServiceConfiguration extends Configuration {
     @JsonProperty
     private String stompQueueName;
 
+
+	@NotEmpty
+    @JsonProperty
+    private String apolloPassword;
+    
     @NotEmpty
     @JsonProperty
-    private String stompQueuePrefix;
+    private String apolloHost;
+    
+    @JsonProperty
+    private int apolloPort;
+    
+    @NotEmpty
+    @JsonProperty
+    private String apolloUser;
+    
+    /**
+	 * @return the apolloUser
+	 */
+	public String getApolloUser() {
+		return apolloUser;
+	}
 
-   @NotEmpty
+	/**
+	 * @param apolloUser the apolloUser to set
+	 */
+	public void setApolloUser(String apolloUser) {
+		this.apolloUser = apolloUser;
+	}
+
+	/**
+	 * @return the apolloPassword
+	 */
+	public String getApolloPassword() {
+		return apolloPassword;
+	}
+
+	
+
+	/**
+	 * @return the apolloHost
+	 */
+	public String getApolloHost() {
+		return apolloHost;
+	}
+
+	/**
+	 * @param apolloHost the apolloHost to set
+	 */
+	public void setApolloHost(String apolloHost) {
+		this.apolloHost = apolloHost;
+	}
+
+	/**
+	 * @return the apolloPort
+	 */
+	public int getApolloPort() {
+		return apolloPort;
+	}
+	/**
+	 * @param apolloPassword the apolloPassword to set
+	 */
+	public void setApolloPassword(String apolloPassword) {
+		this.apolloPassword = apolloPassword;
+	}
+	
+    
+    @NotEmpty
     @JsonProperty
     private String stompTopicName;
 
-    @JsonProperty
-    private String stompTopicPrefix;
-
-    @NotEmpty
-    @JsonProperty
-    private String libraryName;
-
-    @JsonProperty
-    private String apolloHost;
-
-    @JsonProperty
-    public int apolloPort;
-
-    @JsonProperty
-    public String apolloUser;
-
-    @JsonProperty
-    public String apolloPwd;
-    
     /**
      * @return the stompQueueName
      */
     public String getStompQueueName() {
 	return stompQueueName;
     }
-
-    /**
-     * @param stompQueueName
-     *            the stompQueueName to set
-     */
-    public void setStompQueueName(String stompQueueName) {
-	this.stompQueueName = stompQueueName;
-    }
-
-    public String  getStompQueuePrefix() {
-	return stompQueuePrefix;
-    }
-
-    public void setStompQueuePrefix(String prefix) {
-	stompQueuePrefix = prefix;
-    }
-
-    /**
-     * @return the stompTopicName
-     */
-    public String getStompTopicName() {
-	if(stompTopicName == null || stompTopicName.isEmpty()) {
-	    return stompTopicPrefix + "*";
-	}
-	return stompTopicName;
-    }
-
     /**
      * @param stompTopicName
      *            the stompTopicName to set
@@ -77,59 +94,25 @@ public class LibraryServiceConfiguration extends Configuration {
     public void setStompTopicName(String stompTopicName) {
 	this.stompTopicName = stompTopicName;
     }
-
     /**
-     * @return the libraryName
+     * @param stompQueueName
+     *            the stompQueueName to set
      */
-    public String getLibraryName() {
-	return libraryName;
+    public void setStompQueueName(String stompQueueName) {
+	this.stompQueueName = stompQueueName;
     }
-
-    public String getStompTopicPrefix() {
-	return stompTopicPrefix;
-    }
-
-    public void setStompTopicPrefix(String stompTopicPrefix) {
-	this.stompTopicPrefix = stompTopicPrefix;
-    }
-
     /**
-     * @param libraryName
-     *            the libraryName to set
+	 * @param apolloPort the apolloPort to set
+	 */
+	public void setApolloPort(int apolloPort) {
+		this.apolloPort = apolloPort;
+	}
+    /**
+     * @return the stompTopicName
      */
-    public void setLibraryName(String libraryName) {
-	this.libraryName = libraryName;
-    }
-    public String getApolloHost() {
-	return apolloHost;
+    public String getStompTopicName() {
+	return stompTopicName;
     }
 
-    public void setApolloHost(String host) {
-	apolloHost = host;
-    }
-
-    public int getApolloPort() {
-	return apolloPort;
-    }
-
-    public void setApolloPort(int port) {
-	apolloPort = port;
-    }
-
-    public String getApolloUser() {
-	return apolloUser;
-    }
-
-    public void setApolloUser(String user) {
-	apolloUser = user;
-    }
-
-    public String getApolloPassword() {
-	return apolloPwd;
-    }
-
-    public void setApolloPassword(String pwd) {
-	apolloPwd = pwd;
-    }
-
+    
 }

@@ -6,131 +6,128 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.jersey.server.impl.container.servlet.JerseyServletContainerInitializer;
 import com.yammer.dropwizard.client.JerseyClientConfiguration;
 import com.yammer.dropwizard.config.Configuration;
 
 public class ProcurementServiceConfiguration extends Configuration {
-    @NotEmpty
-    @JsonProperty
-    private String stompQueueName;
+	 	
+	 @Valid
+	    @NotNull
+	    @JsonProperty
+	    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+	 public JerseyClientConfiguration getJerseyClientConfiguration() {
+	        return httpClient;
+	    }
+		
+		@NotEmpty
+	    @JsonProperty
+	    private String stompQueueName;
 
-   @NotEmpty
-    @JsonProperty
-    private String stompQueuePrefix;
+	 	@NotEmpty
+	    @JsonProperty
+	    private String stompTopicName;
 
-    @NotEmpty
-    @JsonProperty
-    private String stompTopicPrefix;
+		@NotEmpty
+	    @JsonProperty
+	    private String apolloPassword;
+	    
+	    @NotEmpty
+	    @JsonProperty
+	    private String apolloHost;
+	    
+	    @NotEmpty
+	    @JsonProperty
+	    private String apolloPort;
+	    
+	    @NotEmpty
+	    @JsonProperty
+	    private String apolloUser;
+	    
+	    /**
+		 * @return the apolloUser
+		 */
+		public String getApolloUser() {
+			return apolloUser;
+		}
 
-    @JsonProperty
-    private String apolloHost;
+		/**
+		 * @param apolloUser the apolloUser to set
+		 */
+		public void setApolloUser(String apolloUser) {
+			this.apolloUser = apolloUser;
+		}
 
-    @JsonProperty
-    public int apolloPort;
+		/**
+		 * @return the apolloPassword
+		 */
+		public String getApolloPassword() {
+			return apolloPassword;
+		}
 
-    @JsonProperty
-    public String apolloUser;
+		/**
+		 * @param apolloPassword the apolloPassword to set
+		 */
+		public void setApolloPassword(String apolloPassword) {
+			this.apolloPassword = apolloPassword;
+		}
 
-    @JsonProperty
-    public String apolloPwd;
-    
-    @JsonProperty
-    @NotEmpty
-    private String procurementId;
+		/**
+		 * @return the apolloHost
+		 */
+		public String getApolloHost() {
+			return apolloHost;
+		}
 
-    @JsonProperty
-    @NotEmpty
-    private String publisherResource;
+		/**
+		 * @param apolloHost the apolloHost to set
+		 */
+		public void setApolloHost(String apolloHost) {
+			this.apolloHost = apolloHost;
+		}
 
-    @Valid
-    @NotNull
-    @JsonProperty
-    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+		/**
+		 * @return the apolloPort
+		 */
+		public String getApolloPort() {
+			return apolloPort;
+		}
 
-    /**
-     * 
-     * @return
-     */
-    public JerseyClientConfiguration getJerseyClientConfiguration() {
-	return httpClient;
-    }
+		/**
+		 * @param apolloPort the apolloPort to set
+		 */
+		public void setApolloPort(String apolloPort) {
+			this.apolloPort = apolloPort;
+		}
+	    
+	   
+	    /**
+	     * @return the stompQueueName
+	     */
+	    public String getStompQueueName() {
+		return stompQueueName;
+	    }
 
-    /**
-     * @return the stompQueueName
-     */
-    public String getStompQueueName() {
-	return stompQueueName;
-    }
-    
-    /**
-     * @param stompQueueName
-     *            the stompQueueName to set
-     */
-    public void setStompQueueName(String stompQueueName) {
-	this.stompQueueName = stompQueueName;
-    }
+	    /**
+	     * @param stompQueueName
+	     *            the stompQueueName to set
+	     */
+	    public void setStompQueueName(String stompQueueName) {
+		this.stompQueueName = stompQueueName;
+	    }
 
-    public String  getStompQueuePrefix() {
-	return stompQueuePrefix;
-    }
+	    /**
+	     * @return the stompTopicName
+	     */
+	    public String getStompTopicName() {
+		return stompTopicName;
+	    }
 
-    public void setStompQueuePrefix(String prefix) {
-	stompQueuePrefix = prefix;
-    }
-
-    public String getStompTopicPrefix() {
-	return stompTopicPrefix;
-    }
-
-    public void setStompTopicPrefix(String stompTopicPrefix) {
-	this.stompTopicPrefix = stompTopicPrefix;
-    }
-
-    public String getApolloHost() {
-	return apolloHost;
-    }
-
-    public void setApolloHost(String host) {
-	apolloHost = host;
-    }
-
-    public int getApolloPort() {
-	return apolloPort;
-    }
-
-    public void setApolloPort(int port) {
-	apolloPort = port;
-    }
-
-    public String getApolloUser() {
-	return apolloUser;
-    }
-
-    public void setApolloUser(String user) {
-	apolloUser = user;
-    }
-
-    public String getApolloPassword() {
-	return apolloPwd;
-    }
-
-    public void setApolloPassword(String pwd) {
-	apolloPwd = pwd;
-    }
-
-    public String getProcurementId() {
-	return procurementId;
-    }
-
-    public void setprocurementId(String id) {
-	procurementId = id;
-    }
-
-    public String getPublisherResource() {
-	return publisherResource;
-    }
-
-    public void setPublicReesourde(String resource) {
-	publisherResource = resource;
-    }
+	    /**
+	     * @param stompTopicName
+	     *            the stompTopicName to set
+	     */
+	    public void setStompTopicName(String stompTopicName) {
+		this.stompTopicName = stompTopicName;
+	    }
 }

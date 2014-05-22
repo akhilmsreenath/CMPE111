@@ -3,43 +3,29 @@
 ######################################
 
 # Apollo STOMP Broker Configuration
-stompQueueName: /queue/64762.book.orders
-stompQueuePrefix: /queue/64762.book.
+# FIXME - Replace 99999 with your ID
+stompQueueName: /queue/96762.book.orders
 
 # Procurement Service needs to publish to all topics!
-stompTopicPrefix: /topic/64762.book.
+# FIXME - Replace 99999 with your ID
+stompTopicName: /topic/96762.book.*
 
+# TODO: Apollo STOMP Broker URL and login
 apolloUser: "admin"
 apolloPassword: "password"
-#Y
 apolloHost: "54.215.133.131"
-#X
-#apolloHost: "54.215.133.131"
 apolloPort: 61613
-
-#id for procurement scheduler
-procurementId: 64762
-
-#publisher resource address
-publisherResource: "http://54.215.133.131:9000/orders/64762"
 
 # HTTP-specific options.
 http:
   # Root Path http://{host}:{port}/xxx
-  rootPath: /*
+  rootPath: /library/*
 
   # The port on which the HTTP server listens for service requests.
-  port: 9090
+  port: 8080
 
   # The port on which the HTTP server listens for administrative requests.
   adminPort: 9000
-
-
-httpClient:
-  # The broker does not support gzip encoding. Disabling it...
-  gzipEnabled: false
-  gzipEnabledForRequests: false
-
 
 # Logging settings.
 logging:
