@@ -3,17 +3,22 @@
 ##############################
 
 # Apollo STOMP Broker Configuration
-# FIXME - Replace 99999 with your ID
 stompQueueName: /queue/64762.book.orders
+stompQueuePrefix: /queue/64762.book.
 
 # Library B subscribes to the Computer category ONLY!
-# FIXME - Replace 99999 with your ID
 stompTopicName: /topic/64762.book.computer
+stompTopicPrefix: /topic/64762.book.
 
-# TODO: Apollo STOMP Broker URL and login
+# Name for library B
+libraryName: library-b
+
 apolloUser: "admin"
 apolloPassword: "password"
+#Y
 apolloHost: "54.215.133.131"
+#X
+#apolloHost: "54.215.133.131"
 apolloPort: 61613
 
 # HTTP-specific options.
