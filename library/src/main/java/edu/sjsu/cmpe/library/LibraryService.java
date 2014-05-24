@@ -1,12 +1,5 @@
 package edu.sjsu.cmpe.library;
 
-
-import java.net.MalformedURLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.jms.JMSException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,18 +12,40 @@ import com.yammer.dropwizard.views.ViewBundle;
 import edu.sjsu.cmpe.library.api.resources.BookResource;
 import edu.sjsu.cmpe.library.api.resources.RootResource;
 import edu.sjsu.cmpe.library.config.LibraryServiceConfiguration;
-import edu.sjsu.cmpe.library.repository.Asynchrouns_Msg_Receiver;
 import edu.sjsu.cmpe.library.repository.BookRepository;
 import edu.sjsu.cmpe.library.repository.BookRepositoryInterface;
 import edu.sjsu.cmpe.library.ui.resources.HomeResource;
+
+import org.fusesource.stomp.client.Stomp;
+import org.fusesource.stomp.jms.StompJmsConnectionFactory;
+import org.fusesource.stomp.jms.StompJmsConnection;
+import org.fusesource.stomp.jms.StompJmsQueue;
+
+import javax.jms.TopicSession;
+import javax.jms.Session;
+import javax.jms.TopicConnection;
+import javax.jms.QueueSession;
 
 public class LibraryService extends Service<LibraryServiceConfiguration> {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private static String libraryName;
+
+    public static TopicSession tSession;
+
+    public static javax.jms.MessageProducer producer;
+
+    public static LibraryServiceConfiguration configuration;
+
     public static void main(String[] args) throws Exception {
 	new LibraryService().run(args);
     }
+
+    public static String getLibraryName() {
+	return libraryName;
+    }
+
     @Override
     public void initialize(Bootstrap<LibraryServiceConfiguration> bootstrap) {
 	bootstrap.setName("library-service");
@@ -41,46 +56,46 @@ public class LibraryService extends Service<LibraryServiceConfiguration> {
     @Override
     public void run(LibraryServiceConfiguration configuration,
 	    Environment environment) throws Exception {
+
+	this.configuration = configuration;
+	libraryName = configuration.getLibraryName();
+
 	// This is how you pull the configurations from library_x_config.yml
 	String queueName = configuration.getStompQueueName();
 	String topicName = configuration.getStompTopicName();
-	String apollouser=configuration.getApolloUser();
-	String apolloPassword=configuration.getApolloPassword();
-	String apollohost=configuration.getApolloHost();
-	int apolloPort=configuration.getApolloPort();
-	log.debug("Queue name is {}. Topic name is {}. User is {}, password is {}. host is {}. port is {}", queueName,topicName,apollouser,apolloPassword,apollohost,apolloPort);
+	log.debug("{} - Queue name is {}. Topic name is {}",
+		configuration.getLibraryName(), queueName,
+		topicName);
 	// TODO: Apollo STOMP Broker URL and login
-	// Do from the library_a_config.yml file
-	
-	//--------------------------------------------------------------------------
+	StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
+	factory.setBrokerURI("tcp://" + configuration.getApolloHost() + ":" + configuration.getApolloPort());
+	factory.setUsername(configuration.getApolloUser());
+	factory.setPassword(configuration.getApolloPassword());
+	factory.setQueuePrefix(configuration.getStompQueuePrefix());
+	factory.setTopicPrefix(configuration.getStompTopicPrefix());
+
+	StompJmsConnection connection = (StompJmsConnection) factory.createConnection();
+	connection.start();
+	QueueSession session = connection.createQueueSession(false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+	producer = session.createProducer
+	    (new StompJmsQueue(connection, configuration.getStompQueueName()
+			       .replaceFirst(configuration.getStompQueuePrefix(), "")));
 
 	/** Root API */
 	environment.addResource(RootResource.class);
 	/** Books APIs */
-	BookRepositoryInterface bookRepository = new BookRepository(configuration);
-
-	environment.addResource(new BookResource(bookRepository));
+	BookRepositoryInterface bookRepository = new BookRepository();
+	BookResource bookResource = new BookResource(bookRepository);
+	environment.addResource(bookResource);
 
 	/** UI Resources */
 	environment.addResource(new HomeResource(bookRepository));
-	ExecutorService executor = Executors.newFixedThreadPool(1);
-	final Asynchrouns_Msg_Receiver asyncReceiver=new Asynchrouns_Msg_Receiver(configuration, bookRepository);
-    Runnable backgroundTask = new Runnable() {
 
-	    @Override
-	    public void run() {
-	    	try {
-				try {
-					asyncReceiver.messgListener();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-			} catch (JMSException e) {
-				e.printStackTrace();
-			}
-	    }
+	tSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 
-	};
-	executor.execute(backgroundTask);
+	tSession.createSubscriber(
+				  tSession.createTopic(configuration.getStompTopicName().
+						       replaceFirst(factory.getTopicPrefix(), "")))
+	    .setMessageListener(bookResource);
     }
 }

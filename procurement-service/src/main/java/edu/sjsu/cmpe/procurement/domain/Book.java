@@ -1,13 +1,22 @@
 package edu.sjsu.cmpe.procurement.domain;
 
+import java.net.URL;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class Book {
-    private long isbn;
-    private String title;
-    private String category;
-    private String coverimage;
-    // add more fields here
+    public enum Status {
+	available, checkedout, lost;
+    }
 
+    @NotNull
+    private long isbn;
+    @NotEmpty
+    private String title;
+    @NotEmpty
+    private String category;
+    private URL coverimage;
+    private Status status = Status.available;
     /**
      * @return the isbn
      */
@@ -16,34 +25,6 @@ public class Book {
     }
 
     /**
-	 * @return the category
-	 */
-	public String getCategory() {
-		return category;
-	}
-
-	/**
-	 * @param category the category to set
-	 */
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	/**
-	 * @return the coverimage
-	 */
-	public String getCoverimage() {
-		return coverimage;
-	}
-
-	/**
-	 * @param coverimage the coverimage to set
-	 */
-	public void setCoverimage(String coverimage) {
-		this.coverimage = coverimage;
-	}
-
-	/**
      * @param isbn
      *            the isbn to set
      */
@@ -64,5 +45,29 @@ public class Book {
      */
     public void setTitle(String title) {
 	this.title = title;
+    }
+
+    public String getCategory() {
+	return category;
+    }
+
+    public void setCategory(String category) {
+	this.category =  category;
+    }
+
+    public URL getCoverimage() {
+	return coverimage; 
+    }
+
+    public void setCoverimage(URL coverimage) {
+	this.coverimage = coverimage;
+    }
+
+    public Status getStatus() {
+	return status;
+    }
+
+    public void setStatus(Status status) {
+	this.status = status;
     }
 }
