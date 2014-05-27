@@ -95,7 +95,7 @@ public class ProcurementSchedulerJob extends Job {
     private void postOrderBook(ArrayList<Integer> order) throws Exception {
 	log.info("sending POST request to publisher");
 	BookOrderResponse response = ProcurementService.jerseyClient
-	    .resource("http://54.215.133.131:9000/orders")
+	    .resource("http://54.193.56.218:9000/orders")
 	    .entity(new BookOrderRequest(order).toJsonByteArray(), "application/json")
 	    .post(BookOrderResponse.class);
 	log.info("Response from broker: {}", response);
